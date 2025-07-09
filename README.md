@@ -1,2 +1,2 @@
-# precipitation_application
-Ike Wai application for dissemination and visualizing precipitation for the state of Hawaii
+# ASCDP
+Application for dissemination and visualizing climate data for American Samoa

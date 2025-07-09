@@ -21,6 +21,7 @@ addEventListener("message", async ({ data }) => {
     }
   
     let noData = Number.parseFloat(fileDirectory.GDAL_NODATA);
+    console.log(noData);
   
     let header = {
       nCols: image.getWidth(),

@@ -27,14 +27,7 @@ export class MapComponent implements OnInit {
   @ViewChild("mapElement", {static: false}) mapElement: ElementRef;
   @ViewChild("layerController", {static: true}) layerController: LeafletLayerControlExtensionComponent;
 
-  readonly extents: {[county: string]: L.LatLngBoundsExpression} = {
-    ka: [ [ 21.819, -159.816 ], [ 22.269, -159.25125 ] ],
-    oa: [ [ 21.18, -158.322 ], [ 21.7425, -157.602 ] ],
-    ma: [ [ 20.343, -157.35 ], [ 21.32175, -155.92575 ] ],
-    bi: [ [ 18.849, -156.243 ], [ 20.334, -154.668 ] ],
-    st: [ [ 18.849, -159.816 ], [ 22.269, -154.668 ] ],
-    bounds: [ [14.050369038588524, -167.60742187500003], [26.522031143884014, -144.47021484375003] ]
-  };
+  readonly bounds: [number, number][] = [ [-14.8088, -171.2955], [-13.7814, -170.0845] ];
   //private R: any = L;
 
   selectedMapCell: L.Layer;
@@ -99,11 +92,11 @@ export class MapComponent implements OnInit {
 
     this.options = {
       layers: this.baseLayers["Satellite (Google)"],
-      zoom: 7,
-      center: L.latLng(20.559, -157.242),
+      zoom: 11,
+      center: L.latLng(-14.2951, -170.6900),
       attributionControl: false,
-      minZoom: 6,
-      maxBounds: this.extents.bounds
+      minZoom: 10,
+      maxBounds: this.bounds
     };
 
     delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -126,22 +119,6 @@ export class MapComponent implements OnInit {
   invalidateSize() {
     if(this.map) {
       this.map.invalidateSize();
-    }
-  }
-
-  focusedBoundary = null
-  focusSpatialExtent(extent: string) {
-    this.clearExtent();
-    let bounds: L.LatLngBoundsExpression = this.extents[extent];
-    this.map.flyToBounds(bounds);
-    let boundary = L.rectangle(bounds, {weight: 2, fillOpacity: 0});
-    boundary.addTo(this.map);
-    this.focusedBoundary = boundary;
-  }
-
-  clearExtent() {
-    if(this.focusedBoundary != null) {
-      this.map.removeLayer(this.focusedBoundary);
     }
   }
 
@@ -345,9 +322,9 @@ export class MapComponent implements OnInit {
 
   isExperimental() {
     let experimental = false;
-    if(this.dataset && !this.loading) {
-      experimental = ["rainfall", "ignition_probability"].includes(this.dataset.rasterParams.datatype)  && this.dataset.rasterParams.period == "day" && this.active.data.raster.getBands()["0"].size > 0;
-    }
+    // if(this.dataset && !this.loading) {
+    //   experimental = ["rainfall", "ignition_probability"].includes(this.dataset.rasterParams.datatype)  && this.dataset.rasterParams.period == "day" && this.active.data.raster.getBands()["0"].size > 0;
+    // }
     return experimental;
   }
 
