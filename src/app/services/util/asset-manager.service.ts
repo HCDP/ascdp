@@ -10,6 +10,7 @@ export class AssetManagerService {
   private assetBase: string;
 
   constructor(private domSanitizer: DomSanitizer) {
+    console.log(environment);
     this.assetBase = `${environment.assetBaseUrl}assets/`;
   }
 

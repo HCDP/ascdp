@@ -54,8 +54,6 @@ export class DataSetFormComponent implements OnInit, AfterViewInit {
 
   setupDatasetData() {
     this.datasetData = new Array(DataSetFormComponent.FORM_ORDER.length);
-    console.log(this.formData.datasetFormData.datasetGroups);
-    console.log(this.formData.datasetFormData.datasetValues);
 
     for(let group of this.formData.datasetFormData.datasetGroups) {
       let i = DataSetFormComponent.FORM_ORDER.indexOf(group.tag);
@@ -66,7 +64,6 @@ export class DataSetFormComponent implements OnInit, AfterViewInit {
       };
     }
     for(let set of this.formData.datasetFormData.datasetValues) {
-      console.log(set.tag);
       let i = DataSetFormComponent.FORM_ORDER.indexOf(set.tag);
       this.datasetData[i] = <DatasetSetData>{
         type: "set",
@@ -74,7 +71,6 @@ export class DataSetFormComponent implements OnInit, AfterViewInit {
       };
     }
     let groupIndex = 0;
-    console.log(this.datasetData);
     for(let i = 0; i < this.datasetData.length; i++) {
       if(this.datasetData[i].type == "group") {
         (<DatasetGroupData>this.datasetData[i]).groupIndex = groupIndex++;
