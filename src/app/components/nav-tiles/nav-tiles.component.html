@@ -9,7 +9,7 @@
         Visualize available climate data in the portal.
       </p>
     </div>
-    <div class="tile-background vis-background"></div>
+    <div class="tile-background" [ngStyle]="{'background-image': visBackground}"></div>
   </div>
   <div [@selectColor]="component == 'export' ? 'selected' : 'deselected'" class="nav-tile" (click)="setComponent('export')">
     <div class="text">
@@ -21,6 +21,6 @@
         Generate customized packages of data to export from the portal.
       </p>
     </div>
-    <div class="tile-background export-background"></div>
+    <div class="tile-background" [ngStyle]="{'background-image': exportBackground}"></div>
   </div>
 </div>
