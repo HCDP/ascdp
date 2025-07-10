@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { trigger, state, style, transition, animate } from "@angular/animations"
-
+import { AssetManagerService } from 'src/app/services/util/asset-manager.service';
 
 @Component({
   selector: 'app-nav-tiles',
@@ -25,7 +25,13 @@ export class NavTilesComponent implements OnInit {
   @Output() componentChange: EventEmitter<string> = new EventEmitter<string>();
   @Input() component: string
 
-  constructor() { }
+  visBackground: string;
+  exportBackground: string;
+
+  constructor(private assetService: AssetManagerService) {
+    this.visBackground = `url(${assetService.getAssetURL("/images/vis_tile_background.png")})`;
+    this.exportBackground = `url(${assetService.getAssetURL("/images/export_tile_background.jpg")})`;
+  }
 
   ngOnInit() {
   }

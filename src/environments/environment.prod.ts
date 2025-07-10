@@ -5,6 +5,6 @@
 export const environment = {
   production: true,
   name: 'prod',
-  assetBaseUrl: 'https://rainfall.ikewai.org/',
-  baseUrl:'https://rainfall.ikewai.org/'
+  assetBaseUrl: 'https://hcdp.github.io/ascdp/',
+  baseUrl:'https://hcdp.github.io/ascdp/'
 };
