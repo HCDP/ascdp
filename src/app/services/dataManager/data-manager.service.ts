@@ -110,7 +110,6 @@ export class DataManagerService {
     if(this.lastLocation?.type != "virtual_station" || row != (<V_Station>this.lastLocation).cellData.row || col != (<V_Station>this.lastLocation).cellData.col) {
       const { rasterParams } = this.dataset;
       let properties: any = {
-        extent: "statewide",
         row,
         col,
         ...rasterParams
@@ -218,7 +217,6 @@ export class DataManagerService {
       if(includeRaster) {
         let properties = {
           returnEmptyNotFound: true,
-          extent: "statewide",
           ...additionalParams,
           ...rasterParams
         }
