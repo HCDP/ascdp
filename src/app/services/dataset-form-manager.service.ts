@@ -23,7 +23,27 @@ export class DatasetFormManagerService {
     ////values
     //////period
     let periodDay = new FormValue(new DisplayData("Data measured at a daily time scale.", "Daily", "day"), {period: "day"}, [true, true]);
-    
+    //Climatology mean type
+    let meanMonthly = new FormValue(new DisplayData("Mean monthly maps", "Mean Monthly", "mean_monthly"), {mean_type: "mean_monthly"}, [true, true]);
+    let meanAnnual30 = new FormValue(new DisplayData("Annual maps averaged over a 30 year period", "Mean 30 Year Annual", "mean_30yr_annual"), {mean_type: "mean_30yr_annual"}, [true, true]);
+    //Climatology period
+    let periodJanuaryPrism = new FormValue(new DisplayData("Average values aggregated over the month of January over the years 1971-2000", "January", "january"), {period: "january"}, [true, true]);
+    let periodFebruaryPrism = new FormValue(new DisplayData("Average values aggregated over the month of February over the years 1971-2000", "February", "february"), {period: "february"}, [true, true]);
+    let periodMarchPrism = new FormValue(new DisplayData("Average values aggregated over the month of March over the years 1971-2000", "March", "march"), {period: "march"}, [true, true]);
+    let periodAprilPrism = new FormValue(new DisplayData("Average values aggregated over the month of April over the years 1971-2000", "April", "april"), {period: "april"}, [true, true]);
+    let periodMayPrism = new FormValue(new DisplayData("Average values aggregated over the month of May over the years 1971-2000", "May", "may"), {period: "may"}, [true, true]);
+    let periodJunePrism = new FormValue(new DisplayData("Average values aggregated over the month of June over the years 1971-2000", "June", "june"), {period: "june"}, [true, true]);
+    let periodJulyPrism = new FormValue(new DisplayData("Average values aggregated over the month of July over the years 1971-2000", "July", "july"), {period: "july"}, [true, true]);
+    let periodAugustPrism = new FormValue(new DisplayData("Average values aggregated over the month of August over the years 1971-2000", "August", "august"), {period: "august"}, [true, true]);
+    let periodSeptemberPrism = new FormValue(new DisplayData("Average values aggregated over the month of September over the years 1971-2000", "September", "september"), {period: "september"}, [true, true]);
+    let periodOctoberPrism = new FormValue(new DisplayData("Average values aggregated over the month of October over the years 1971-2000", "October", "october"), {period: "october"}, [true, true]);
+    let periodNovemberPrism = new FormValue(new DisplayData("Average values aggregated over the month of November over the years 1971-2000", "November", "november"), {period: "november"}, [true, true]);
+    let periodDecemberPrism = new FormValue(new DisplayData("Average values aggregated over the month of December over the years 1971-2000", "December", "december"), {period: "december"}, [true, true]);
+
+    let period30yrPrism = new FormValue(new DisplayData("30 year climatology averaged over the years 1971-2000", "1971-2000", "1971-2000"), {period: "1971-2000"}, [true, true]);
+
+
+
     ////values
    
     //////units
@@ -37,19 +57,47 @@ export class DatasetFormManagerService {
     let periodNode = new FormNode(new DisplayData("The time period over which the data is measured.", "Time Period", "period"), [
       periodDay
     ]);
+    let prismClimatologyMeanTypeNode = new FormNode(new DisplayData("The type of data aggregation", "Mean Type", "mean_type"), [
+      meanMonthly,
+      meanAnnual30
+    ]);
+
+    let prismClimatologyPeriodNode = new FormNode(new DisplayData("The time period over which station data were averaged to create the map", "Data Period", "cl_mean"), [
+      periodJanuaryPrism,
+      periodFebruaryPrism,
+      periodMarchPrism,
+      periodAprilPrism,
+      periodMayPrism,
+      periodJunePrism,
+      periodJulyPrism,
+      periodAugustPrism,
+      periodSeptemberPrism,
+      periodOctoberPrism,
+      periodNovemberPrism,
+      periodDecemberPrism,
+      period30yrPrism
+    ]);
 
 
-    let extentDisplayData = new DisplayData("The area of coverage for the data.", "Spatial Extent", "extent");
     let unitsDisplayData = new DisplayData("The units the data are represented in.", "Units", "units");
 
     let rfUnitsNode = new FormNode(unitsDisplayData, [mmUnits]);
 
 
     ////form data
-    //new rainfall and min and max temperature all use same elements so make one and reuse
+    //rainfall
     let rainfallFormData = new FormData([
       periodNode
     ], []);
+    //climatologies
+    let prismClimatologyFormData = new FormData([
+      prismClimatologyMeanTypeNode,
+      prismClimatologyPeriodNode
+    ], []);
+    let prismClimatologyExportFormData = new FormData([
+      prismClimatologyMeanTypeNode
+    ], []);
+
 
     //Create Focus Managers
     ////dates
@@ -64,10 +112,51 @@ export class DatasetFormManagerService {
     let rainfallDay = new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", "Daily Rainfall", [0, 20], [true, false], rainfallDayTimeseriesData, [rainfallDayTimeseriesData], false, {
       period: "day",
     }, null, this.requestFactory);
+    //climatologies
+    let prismRainfallClimatologySets = [];
+    let prismMaxTemperatureClimatologySets = [];
+    let prismMinTemperatureClimatologySets = [];
+    let months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+    for(let month of months) {
+      let capMonth = month.charAt(0).toUpperCase() + month.slice(1);
+      let prismRainfallClimatology = new VisDatasetItem(false, true, "Inches", "in", "Rainfall", `${capMonth} Mean Rainfall`, [0, 30], [true, false], null, [], false, {
+        mean_type: "mean_monthly",
+        cl_mean: month
+      }, null, this.requestFactory);
+      prismRainfallClimatologySets.push(prismRainfallClimatology);
+      let prismMaxTemperatureClimatology = new VisDatasetItem(false, true, "Fahrenheit", "°F", "Maximum Temperature", `${capMonth} Maximum Temperature`, [75, 90], [false, false], null, [], true, {
+        mean_type: "mean_monthly",
+        cl_mean: month
+      }, null, this.requestFactory);
+      let prismMinTemperatureClimatology = new VisDatasetItem(false, true, "Fahrenheit", "°F", "Minimum Temperature", `${capMonth} Minimum Temperature`, [75, 90], [false, false], null, [], true, {
+        mean_type: "mean_monthly",
+        cl_mean: month
+      }, null, this.requestFactory);
+      prismMaxTemperatureClimatologySets.push(prismMaxTemperatureClimatology);
+      prismMinTemperatureClimatologySets.push(prismMinTemperatureClimatology);
+    }
+
+    let prismRainfallClimatology = new VisDatasetItem(false, true, "Inches", "in", "Rainfall", `1971-2000 Mean Rainfall`, [0, 400], [true, false], null, [], false, {
+      mean_type: "mean_30yr_annual",
+      cl_mean: "1971-2000"
+    }, null, this.requestFactory);
+    prismRainfallClimatologySets.push(prismRainfallClimatology);
+    let prismMaxTemperatureClimatology = new VisDatasetItem(false, true, "Fahrenheit", "°F", "Maximum Temperature", `1971-2000 Maximum Temperature`, [75, 90], [false, false], null, [], true, {
+      mean_type: "mean_30yr_annual",
+      cl_mean: "1971-2000"
+    }, null, this.requestFactory);
+    let prismMinTemperatureClimatology = new VisDatasetItem(false, true, "Fahrenheit", "°F", "Minimum Temperature", `1971-2000 Minimum Temperature`, [75, 90], [false, false], null, [], true, {
+      mean_type: "mean_30yr_annual",
+      cl_mean: "1971-2000"
+    }, null, this.requestFactory);
+    prismMaxTemperatureClimatologySets.push(prismMaxTemperatureClimatology);
+    prismMinTemperatureClimatologySets.push(prismMinTemperatureClimatology);
 
  
  
     ////Datasets
+
+    //rainfall
     let rainfallDatasetDisplayData = new DisplayData("Rainfall data (1980 - 2024).", "Rainfall", "rainfall");
 
     let rainfallVisDataset = new Dataset<VisDatasetItem>(rainfallDatasetDisplayData, {
@@ -76,6 +165,30 @@ export class DatasetFormManagerService {
     }, rainfallFormData, [
       rainfallDay
     ]);
+
+    //climatologies
+    let prismClimatologyRainfallDatasetDisplayData = new DisplayData("Mean rainfall climatologies", "Mean Rainfall", "prism_mean_rf_climatology");
+    let prismClimatologyMinTemperatureDatasetDisplayData = new DisplayData("Minimum air temperature climatologies", "Minimum Air Temperature", "prism_min_temp_climatology");
+    let prismClimatologyMaxTemperatureDatasetDisplayData = new DisplayData("Maximum air temperature climatologies", "Maximum Air Temperature", "prism_max_temp_climatology");
+
+    let prismRainfallClimatologyVisDataset = new Dataset<VisDatasetItem>(prismClimatologyRainfallDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "prism_climatology",
+      variable: "rainfall"
+    }, prismClimatologyFormData, prismRainfallClimatologySets);
+    let prismMaxTemperatureClimatologyVisDataset = new Dataset<VisDatasetItem>(prismClimatologyMaxTemperatureDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "prism_climatology",
+      variable: "air_temperature",
+      aggregation: "max"
+    }, prismClimatologyFormData, prismMaxTemperatureClimatologySets);
+    let prismMinTemperatureClimatologyVisDataset = new Dataset<VisDatasetItem>(prismClimatologyMinTemperatureDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "prism_climatology",
+      variable: "air_temperature",
+      aggregation: "min"
+    }, prismClimatologyFormData, prismMinTemperatureClimatologySets);
+
 
 
 
@@ -89,29 +202,57 @@ export class DatasetFormManagerService {
     //file display data
     let rainfallMapDisplayData = new DisplayData("A gridded rainfall map representing estimated rainfall values over American Samoa.", "Rainfall Map", "data_map");
     let metadataDisplayData = new DisplayData("Gridded map product metadata and error metrics.", "Metadata and Error Metrics", "metadata");
-
-
+    let climatologyRainfallMapDisplayData = new DisplayData("A gridded map displaying the average estimated rainfall over the selected time period.", "Rainfall Map", "data_map");
+    let climatologyTemperatureMapDisplayData = new DisplayData("A gridded map displaying the average estimated mean temperature over the selected time period.", "Temperature Map", "data_map");
 
     ////nodes
 
     //fileProperties
     let rfMmUnitsProperty = new FileProperty(rfUnitsNode.filter(["mm"]), ["mm"]);
-
+    let monthPrismClimatologyProperty = new FileProperty(prismClimatologyPeriodNode.filter(["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]), ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]);
+    let yr30PrismClimatologyProperty = new FileProperty(prismClimatologyPeriodNode.filter(["1971-2000"]), ["1971-2000"]);
 
 
     //package files
     let rainfallMapFile = new FileData(rainfallMapDisplayData, geotiffFtype, ["metadata"]);
+    let prismClimatologyRainfallMapFile = new FileData(climatologyRainfallMapDisplayData, geotiffFtype, []);
+    let prismClimatologyTemperatureMapFile = new FileData(climatologyTemperatureMapDisplayData, geotiffFtype, []);
     let metadataFile = new FileData(metadataDisplayData, txtFtype, []);
 
 
 
     let rainfallDayMapFileGroup = new FileGroup(new DisplayData("", "", "a"), [rainfallMapFile, metadataFile], [rfMmUnitsProperty]);
+    let prismClimatologyRainfallMonthFileGroup = new FileGroup(new DisplayData("", "", "b"), [prismClimatologyRainfallMapFile], [monthPrismClimatologyProperty]);
+    let prismClimatologyRainfall30yrFileGroup = new FileGroup(new DisplayData("", "", "c"), [prismClimatologyRainfallMapFile], [yr30PrismClimatologyProperty]);
+    let prismClimatologyTemperatureMonthFileGroup = new FileGroup(new DisplayData("", "", "d"), [prismClimatologyTemperatureMapFile], [monthPrismClimatologyProperty]);
+    let prismClimatologyTemperature30yrFileGroup = new FileGroup(new DisplayData("", "", "e"), [prismClimatologyTemperatureMapFile], [yr30PrismClimatologyProperty]);
 
     //export items
     ////rainfall
     let rainfallDayExportItem = new ExportDatasetItem([rainfallDayMapFileGroup], {
       period: "day"
     }, "Daily Rainfall", rainfallDayTimeseriesData, this.requestFactory);
+    let prismClimatologyRainfallMonthExportItem = new ExportDatasetItem([prismClimatologyRainfallMonthFileGroup], {
+      mean_type: "mean_monthly"
+    }, "PRISM Mean Monthly Rainfall Climatologies", null, this.requestFactory);
+    let prismClimatologyRainfall30yrExportItem = new ExportDatasetItem([prismClimatologyRainfall30yrFileGroup], {
+      mean_type: "mean_30yr_annual"
+    }, "PRISM Mean Annual 30 Year Rainfall Climatologies", null, this.requestFactory);
+
+
+    let prismClimatologyMaxTemperatureMonthExportItem = new ExportDatasetItem([prismClimatologyTemperatureMonthFileGroup], {
+      mean_type: "mean_monthly"
+    }, "PRISM Mean Monthly Maximum Temperature Climatologies", null, this.requestFactory);
+    let prismClimatologyMaxTemperature30yrExportItem = new ExportDatasetItem([prismClimatologyTemperature30yrFileGroup], {
+      mean_type: "mean_30yr_annual"
+    }, "PRISM Mean Annual 30 Year Maximum Temperature Climatologies", null, this.requestFactory);
+
+    let prismClimatologyMinTemperatureMonthExportItem = new ExportDatasetItem([prismClimatologyTemperatureMonthFileGroup], {
+      mean_type: "mean_monthly"
+    }, "PRISM Mean Monthly Minimum Temperature Climatologies", null, this.requestFactory);
+    let prismClimatologyMinTemperature30yrExportItem = new ExportDatasetItem([prismClimatologyTemperature30yrFileGroup], {
+      mean_type: "mean_30yr_annual"
+    }, "PRISM Mean Annual 30 Year Minimum Temperature Climatologies", null, this.requestFactory);
 
 
     ////Datasets
@@ -122,23 +263,55 @@ export class DatasetFormManagerService {
       rainfallDayExportItem
     ]);
 
+    let prismClimatologyRainfallExportDataset = new Dataset<ExportDatasetItem>(prismClimatologyRainfallDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "prism_climatology",
+      variable: "rainfall"
+    }, prismClimatologyExportFormData, [
+      prismClimatologyRainfallMonthExportItem,
+      prismClimatologyRainfall30yrExportItem
+    ]);
+    let prismClimatologyMaxTemperatureExportDataset = new Dataset<ExportDatasetItem>(prismClimatologyMaxTemperatureDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "prism_climatology",
+      variable: "air_temperature",
+      aggregation: "max"
+    }, prismClimatologyExportFormData, [
+      prismClimatologyMaxTemperatureMonthExportItem,
+      prismClimatologyMaxTemperature30yrExportItem
+    ]);
+    let prismClimatologyMinTemperatureExportDataset = new Dataset<ExportDatasetItem>(prismClimatologyMinTemperatureDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "prism_climatology",
+      variable: "air_temperature",
+      aggregation: "min"
+    }, prismClimatologyExportFormData, [
+      prismClimatologyMinTemperatureMonthExportItem,
+      prismClimatologyMinTemperature30yrExportItem
+    ]);
+
 
 
     ///////////////////////////////////////////////////////////////////
     ///////////// Create Dataset Groups and Form Managers /////////////
     ///////////////////////////////////////////////////////////////////
+    let prismClimatologyGrouperDisplayData = new DisplayData("PRISM climatologies.", "PRISM Climatology", "prism_climatology");
 
     let datasetFormDisplayData = new DisplayData("Select the type of data you would like to view. Hover over an option for a description of the dataset.", "Dataset", "dataset");
     //vis dataset groups
-    let visDatasets = [rainfallVisDataset];
+    let visDatasets = [rainfallVisDataset, prismRainfallClimatologyVisDataset, prismMaxTemperatureClimatologyVisDataset, prismMinTemperatureClimatologyVisDataset];
     let visDatasetSingles: Dataset<VisDatasetItem>[] = [rainfallVisDataset];
-    let visDatasetGroupers: DatasetSelectorGroup[] = [];
+    let visDatasetGroupers: DatasetSelectorGroup[] = [
+      new DatasetSelectorGroup(prismClimatologyGrouperDisplayData, [prismRainfallClimatologyVisDataset, prismMaxTemperatureClimatologyVisDataset, prismMinTemperatureClimatologyVisDataset]),
+    ];
     let visDatasetFormData = new DatasetFormData(datasetFormDisplayData, visDatasetSingles, visDatasetGroupers);
 
     //export dataset groups
-    let exportDatasets = [rainfallExportDataset];
+    let exportDatasets = [rainfallExportDataset, prismClimatologyRainfallExportDataset, prismClimatologyMaxTemperatureExportDataset, prismClimatologyMinTemperatureExportDataset];
     let exportDatasetSingles: Dataset<ExportDatasetItem>[] = [rainfallExportDataset];
-    let exportDatasetGroupers: DatasetSelectorGroup[] = [];
+    let exportDatasetGroupers: DatasetSelectorGroup[] = [
+      new DatasetSelectorGroup(prismClimatologyGrouperDisplayData, [prismClimatologyRainfallExportDataset, prismClimatologyMaxTemperatureExportDataset, prismClimatologyMinTemperatureExportDataset]),
+    ];
     let exportDatasetFormData = new DatasetFormData(datasetFormDisplayData, exportDatasetSingles, exportDatasetGroupers);
 
     //default values for each node
