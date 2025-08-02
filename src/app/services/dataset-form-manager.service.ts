@@ -23,6 +23,8 @@ export class DatasetFormManagerService {
     ////values
     //////period
     let periodDay = new FormValue(new DisplayData("Data measured at a daily time scale.", "Daily", "day"), {period: "day"}, [true, true]);
+    //fill
+    let fillPartialFilled = new FormValue(new DisplayData("This data has undergone QA/QC and is partially filled using statistical techniques to estimate some missing station values.", "Partial Filled", "partial"), {fill: "partial"}, [false, true]);
     //Climatology mean type
     let meanMonthly = new FormValue(new DisplayData("Mean monthly maps", "Mean Monthly", "mean_monthly"), {mean_type: "mean_monthly"}, [true, true]);
     let meanAnnual30 = new FormValue(new DisplayData("Annual maps averaged over a 30 year period", "Mean 30 Year Annual", "mean_30yr_annual"), {mean_type: "mean_30yr_annual"}, [true, true]);
@@ -39,9 +41,27 @@ export class DatasetFormManagerService {
     let periodOctoberPrism = new FormValue(new DisplayData("Average values aggregated over the month of October over the years 1971-2000", "October", "october"), {period: "october"}, [true, true]);
     let periodNovemberPrism = new FormValue(new DisplayData("Average values aggregated over the month of November over the years 1971-2000", "November", "november"), {period: "november"}, [true, true]);
     let periodDecemberPrism = new FormValue(new DisplayData("Average values aggregated over the month of December over the years 1971-2000", "December", "december"), {period: "december"}, [true, true]);
-
     let period30yrPrism = new FormValue(new DisplayData("30 year climatology averaged over the years 1971-2000", "1971-2000", "1971-2000"), {period: "1971-2000"}, [true, true]);
-
+    //Downscaling
+    //////downscaling method
+    let dsmChelsa = new FormValue(new DisplayData("CHELSA is essentially a statistical downscaling of the ERA-Interim reanalysis, with the temperature downscaling based on mean lapse rates and elevation, and the precipitation algorithm using geographic predictors including wind fields, exposure, and boundary layer height. The data are intended for applications that depend on high resolution data.", "CHELSA", "chelsa"), {dsm: "chelsa"}, [true, true]);
+    //////climate model
+    let climateSSP126 = new FormValue(new DisplayData("This scenario uses an additional radiative forcing of 2.6 W/m² by the year 2100 and is a remake of the optimistic scenario RCP2.6. This scenario designed with the aim of simulating a development that is compatible with the 2°C target. This scenario assumes climate protection measures being taken.", "SSP126", "ssp126"), {model: "ssp126"}, [true, true]);
+    let climateSSP370 = new FormValue(new DisplayData("This scenario uses an additional radiative forcing of 7 W/m² by the year 2100 and is in the upper-middle part of the full range of scenarios. It was newly introduced after the RCP scenarios, closing the gap between RCP6.0 and RCP8.5.", "SSP370", "ssp370"), {model: "ssp370"}, [true, true]);
+    let climateSSP585 = new FormValue(new DisplayData("This scenario uses an additional radiative forcing of 8.5 W/m² by the year 2100, this scenario represents the upper boundary of the range of scenarios described in the literature. It can be understood as an update of the CMIP5 scenario RCP8.5, now combined with socioeconomic reasons.", "SSP585", "ssp585"), {model: "ssp585"}, [true, true]);
+    //////season
+    let seasonAnnual = new FormValue(new DisplayData("Includes all annual data.", "Annual", "annual"), {season: "annual"}, [true, true]);
+    let seasonDry = new FormValue(new DisplayData("Only includes data from the wet season.", "Wet", "wet"), {season: "wet"}, [true, true]);
+    let seasonWet = new FormValue(new DisplayData("Only includes data from the dry season.", "Dry", "dry"), {season: "dry"}, [true, true]);
+    //ds period
+    let periodChelsaLate = new FormValue(new DisplayData("Late-century (2071-2100) projections.", "Late-Century (2071-2100)", "2071-2100"), {period: "2071-2100"}, [true, true]);
+    //view types
+    let percentChangeView = new FormValue(new DisplayData("Percent change in value relative to present day conditions.", "Percent change", "percent"), {
+      type: "percent"
+    }, null);
+    let absoluteChangeView = new FormValue(new DisplayData("Change in value relative to present day conditions.", "Absolute change", "absolute"), {
+      type: "absolute"
+    }, null);
 
 
     ////values
@@ -50,9 +70,14 @@ export class DatasetFormManagerService {
     let mmUnits = new FormValue(new DisplayData("Values in millimeters", "mm", "mm"), {
       units: "mm"
     }, null);
+    let cUnits = new FormValue(new DisplayData("Values in degrees celcius", "°C", "c"), {
+      units: "celcius"
+    }, null);
    
 
-
+    let fillNode = new FormNode(new DisplayData("The type of processing the station data goes through.", "Data Fill", "fill"), [
+      fillPartialFilled
+    ]);
 
     let periodNode = new FormNode(new DisplayData("The time period over which the data is measured.", "Time Period", "period"), [
       periodDay
@@ -78,15 +103,52 @@ export class DatasetFormManagerService {
       period30yrPrism
     ]);
 
+    //DS
+    let dsmNode = new FormNode(new DisplayData("The type of downscaling climate model used for future projections.", "Downscaling Method", "dsm"), [
+      dsmChelsa
+    ]);
+    let climateNode = new FormNode(new DisplayData("The climate model used to predict future data.", "Future Scenario", "model"), [
+      climateSSP126,
+      climateSSP370,
+      climateSSP585
+    ]);
+    let seasonNode = new FormNode(new DisplayData("The season measurements and projections are made for.", "Season", "season"), [
+      seasonAnnual,
+      seasonDry,
+      seasonWet
+    ]);
 
+    let dsPeriodNode = new FormNode(new DisplayData("The period of coverage for the data to display, including baseline present day data and future projections", "Data Period", "ds_period"), [
+      periodChelsaLate
+    ]);
+
+    let viewTypeDisplayData = new DisplayData("How should the data be viewed? Either view the data directly or relative to present conditions.", "View Type", "view");
     let unitsDisplayData = new DisplayData("The units the data are represented in.", "Units", "units");
+
+    let rfDSViewTypeNode = new FormNode(viewTypeDisplayData, [absoluteChangeView, percentChangeView], absoluteChangeView);
+    let tempDSViewTypeNode = new FormNode(viewTypeDisplayData, [absoluteChangeView], absoluteChangeView);
+
+
+    let rfdsUnitsNode = new FormNode(unitsDisplayData, [mmUnits]);
+    let tempdsUnitsNode = new FormNode(unitsDisplayData, [cUnits]);
+
 
     let rfUnitsNode = new FormNode(unitsDisplayData, [mmUnits]);
 
+    ////categories
+    //right now only fill data is categorized separately under station data
+    let stationDataFillCategory = new FormCategory(new DisplayData("These options apply only to the station data displayed on the map. Gridded map products are generated using partial filled station data.", "Station Data", "station_data"), [
+      fillNode
+    ]);
 
     ////form data
     //rainfall
     let rainfallFormData = new FormData([
+      periodNode
+    ], [
+      stationDataFillCategory
+    ]);
+    let periodOnlyFormData = new FormData([
       periodNode
     ], []);
     //climatologies
@@ -96,6 +158,31 @@ export class DatasetFormManagerService {
     ], []);
     let prismClimatologyExportFormData = new FormData([
       prismClimatologyMeanTypeNode
+    ], []);
+    //DS
+    //rainfall downscaling data
+    let dsRainfallFormData = new FormData([
+      dsmNode,
+      climateNode,
+      seasonNode,
+      dsPeriodNode
+    ], []);
+    let dsRainfallFormDataExport = new FormData([
+      dsmNode,
+      climateNode,
+      seasonNode
+    ], []);
+    //temperature downscaling data
+    let dsTemperatureFormDataExport = new FormData([
+      dsmNode,
+      climateNode,
+      seasonNode
+    ], []);
+    let dsTemperatureFormData = new FormData([
+      dsmNode,
+      climateNode,
+      seasonNode,
+      dsPeriodNode
     ], []);
 
 
@@ -109,8 +196,9 @@ export class DatasetFormManagerService {
     let rainfallDayTimeseriesData = new TimeseriesData(dayPeriod, monthPeriod, this.dateHandler);
 
 
-    let rainfallDay = new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", "Daily Rainfall", [0, 20], [true, false], rainfallDayTimeseriesData, [rainfallDayTimeseriesData], false, {
+    let rainfallDayPartial = new VisDatasetItem(true, true, "Millimeters", "mm", "Rainfall", "Daily Rainfall", [0, 20], [true, false], rainfallDayTimeseriesData, [rainfallDayTimeseriesData], false, {
       period: "day",
+      fill: "partial"
     }, null, this.requestFactory);
     //climatologies
     let prismRainfallClimatologySets = [];
@@ -151,7 +239,103 @@ export class DatasetFormManagerService {
     }, null, this.requestFactory);
     prismMaxTemperatureClimatologySets.push(prismMaxTemperatureClimatology);
     prismMinTemperatureClimatologySets.push(prismMinTemperatureClimatology);
+    
+    //DS
+    let rfUnitRepMap: ViewDataMap = {
+      percent: {
+        displayStyle: "diverging",
+        units: {
+          percent: {
+            unit: "Percent",
+            short: "%",
+            range: [-50, 50]
+          }
+        }
+      },
+      absolute: {
+        displayStyle: "diverging",
+        units: {
+          mm: {
+            unit: "Millimeters",
+            short: "mm",
+            range: [-1000, 1000]
+          }
+        }
+      }
+    }
+    let rfChelsaDSItems = [
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP126) — 2071-2100}`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp126",
+        season: "annual",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP370) — 2071-2100}`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp370",
+        season: "annual",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP585) — 2071-2100}`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp585",
+        season: "annual",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory)
+    ]
 
+    let tempUnitRepMap: ViewDataMap = {
+      absolute: {
+        displayStyle: "increasing",
+        units: {
+          c: {
+            unit: "Celcius",
+            short: "°C",
+            range: [4.4, 5.25]
+          }
+        }
+      }
+    }
+    let tempChelsaDSItems = [
+      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Annual Temperature (SSP370) — 2071-2100}`, [75, 90], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp370",
+        season: "annual",
+        ds_period: "2071-2100"
+      }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
+      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Annual Temperature (SSP585) — 2071-2100}`, [75, 90], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp585",
+        season: "annual",
+        ds_period: "2071-2100"
+      }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
+
+      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Wet Season Temperature (SSP370) — 2071-2100}`, [75, 90], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp370",
+        season: "wet",
+        ds_period: "2071-2100"
+      }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
+      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Wet Season Temperature (SSP585) — 2071-2100}`, [75, 90], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp585",
+        season: "wet",
+        ds_period: "2071-2100"
+      }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
+
+      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Dry Season Temperature (SSP370) — 2071-2100}`, [75, 90], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp370",
+        season: "dry",
+        ds_period: "2071-2100"
+      }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
+      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Dry Season Temperature (SSP585) — 2071-2100}`, [75, 90], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp585",
+        season: "dry",
+        ds_period: "2071-2100"
+      }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory)
+    ];
  
  
     ////Datasets
@@ -163,7 +347,7 @@ export class DatasetFormManagerService {
       location: "american_samoa",
       datatype: "rainfall"
     }, rainfallFormData, [
-      rainfallDay
+      rainfallDayPartial,
     ]);
 
     //climatologies
@@ -189,6 +373,19 @@ export class DatasetFormManagerService {
       aggregation: "min"
     }, prismClimatologyFormData, prismMinTemperatureClimatologySets);
 
+    //DS
+    let dsRainfallDatasetDisplayData = new DisplayData("Downscaled future projections for rainfall data.", "Rainfall Projections", "ds_rainfall");
+    let dsTemperatureDatasetDisplayData = new DisplayData("Downscaled future projections for temperature data.", "Temperature Projections", "ds_temp");
+
+    let dsRainfallVisDataset = new Dataset<VisDatasetItem>(dsRainfallDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "downscaling_rainfall"
+    }, dsRainfallFormData, rfChelsaDSItems);
+    let dsTemperatureVisDataset = new Dataset<VisDatasetItem>(dsTemperatureDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "downscaling_temperature"
+    }, dsTemperatureFormData, tempChelsaDSItems);
+
 
 
 
@@ -199,22 +396,27 @@ export class DatasetFormManagerService {
     //filetypes
     let geotiffFtype = new FileType("GeoTIFF", "tif", "GeoTIFF files are a variant of the TIFF file format which is used to store raster based data/graphics including georeferencing information.");
     let txtFtype = new FileType("Text", "txt", "A plaintext file.");
+    let csvFtype = new FileType("Comma-Separated Values", "csv", "A text based file with data separated by commas.");
+
     //file display data
     let rainfallMapDisplayData = new DisplayData("A gridded rainfall map representing estimated rainfall values over American Samoa.", "Rainfall Map", "data_map");
     let metadataDisplayData = new DisplayData("Gridded map product metadata and error metrics.", "Metadata and Error Metrics", "metadata");
     let climatologyRainfallMapDisplayData = new DisplayData("A gridded map displaying the average estimated rainfall over the selected time period.", "Rainfall Map", "data_map");
     let climatologyTemperatureMapDisplayData = new DisplayData("A gridded map displaying the average estimated mean temperature over the selected time period.", "Temperature Map", "data_map");
+    let stationPartialDisplayData = new DisplayData("Processed station data including each station's metadata and values over a period of time", "Station Data", "station_data");
 
     ////nodes
 
     //fileProperties
     let rfMmUnitsProperty = new FileProperty(rfUnitsNode.filter(["mm"]), ["mm"]);
+    let fillProperty = new FileProperty(fillNode, ["partial"]);
     let monthPrismClimatologyProperty = new FileProperty(prismClimatologyPeriodNode.filter(["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]), ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]);
     let yr30PrismClimatologyProperty = new FileProperty(prismClimatologyPeriodNode.filter(["1971-2000"]), ["1971-2000"]);
 
 
     //package files
     let rainfallMapFile = new FileData(rainfallMapDisplayData, geotiffFtype, ["metadata"]);
+    let stationFile = new FileData(stationPartialDisplayData, csvFtype, []);
     let prismClimatologyRainfallMapFile = new FileData(climatologyRainfallMapDisplayData, geotiffFtype, []);
     let prismClimatologyTemperatureMapFile = new FileData(climatologyTemperatureMapDisplayData, geotiffFtype, []);
     let metadataFile = new FileData(metadataDisplayData, txtFtype, []);
@@ -222,6 +424,7 @@ export class DatasetFormManagerService {
 
 
     let rainfallDayMapFileGroup = new FileGroup(new DisplayData("", "", "a"), [rainfallMapFile, metadataFile], [rfMmUnitsProperty]);
+    let rainfallDayStationFileGroup = new FileGroup(new DisplayData("", "", "aa"), [stationFile], [rfMmUnitsProperty, fillProperty]);
     let prismClimatologyRainfallMonthFileGroup = new FileGroup(new DisplayData("", "", "b"), [prismClimatologyRainfallMapFile], [monthPrismClimatologyProperty]);
     let prismClimatologyRainfall30yrFileGroup = new FileGroup(new DisplayData("", "", "c"), [prismClimatologyRainfallMapFile], [yr30PrismClimatologyProperty]);
     let prismClimatologyTemperatureMonthFileGroup = new FileGroup(new DisplayData("", "", "d"), [prismClimatologyTemperatureMapFile], [monthPrismClimatologyProperty]);
@@ -229,8 +432,8 @@ export class DatasetFormManagerService {
 
     //export items
     ////rainfall
-    let rainfallDayExportItem = new ExportDatasetItem([rainfallDayMapFileGroup], {
-      period: "day"
+    let rainfallDayExportItem = new ExportDatasetItem([rainfallDayMapFileGroup, rainfallDayStationFileGroup], {
+      period: "day",
     }, "Daily Rainfall", rainfallDayTimeseriesData, this.requestFactory);
     let prismClimatologyRainfallMonthExportItem = new ExportDatasetItem([prismClimatologyRainfallMonthFileGroup], {
       mean_type: "mean_monthly"
@@ -259,7 +462,7 @@ export class DatasetFormManagerService {
     let rainfallExportDataset = new Dataset<ExportDatasetItem>(rainfallDatasetDisplayData, {
       location: "american_samoa",
       datatype: "rainfall"
-    }, rainfallFormData, [
+    }, periodOnlyFormData, [
       rainfallDayExportItem
     ]);
 
@@ -296,13 +499,15 @@ export class DatasetFormManagerService {
     ///////////// Create Dataset Groups and Form Managers /////////////
     ///////////////////////////////////////////////////////////////////
     let prismClimatologyGrouperDisplayData = new DisplayData("PRISM climatologies.", "PRISM Climatology", "prism_climatology");
+    let dsGrouperDisplayData = new DisplayData("Future climate projections using downscaling prediction methods.", "Future Climate Projections", "downscaled");
 
     let datasetFormDisplayData = new DisplayData("Select the type of data you would like to view. Hover over an option for a description of the dataset.", "Dataset", "dataset");
     //vis dataset groups
-    let visDatasets = [rainfallVisDataset, prismRainfallClimatologyVisDataset, prismMaxTemperatureClimatologyVisDataset, prismMinTemperatureClimatologyVisDataset];
+    let visDatasets = [rainfallVisDataset, prismRainfallClimatologyVisDataset, prismMaxTemperatureClimatologyVisDataset, prismMinTemperatureClimatologyVisDataset, dsRainfallVisDataset, dsTemperatureVisDataset];
     let visDatasetSingles: Dataset<VisDatasetItem>[] = [rainfallVisDataset];
     let visDatasetGroupers: DatasetSelectorGroup[] = [
       new DatasetSelectorGroup(prismClimatologyGrouperDisplayData, [prismRainfallClimatologyVisDataset, prismMaxTemperatureClimatologyVisDataset, prismMinTemperatureClimatologyVisDataset]),
+      new DatasetSelectorGroup(dsGrouperDisplayData, [dsRainfallVisDataset, dsTemperatureVisDataset])
     ];
     let visDatasetFormData = new DatasetFormData(datasetFormDisplayData, visDatasetSingles, visDatasetGroupers);
 
@@ -317,11 +522,13 @@ export class DatasetFormManagerService {
     //default values for each node
     let defaultVisState = {
       datatype: "rainfall",
-      period: "day"
+      period: "day",
+      fill: "partial"
     };
     let defaultExportState = {
       datatype: "rainfall",
-      period: "day"
+      period: "day",
+      fill: "partial"
     };
     //create form managers
     this._visFormManager = new FormManager(visDatasets, visDatasetFormData, defaultVisState);
