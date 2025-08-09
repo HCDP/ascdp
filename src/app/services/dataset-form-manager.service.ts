@@ -1312,8 +1312,8 @@ export class TimeseriesData {
 
   set dateRange(range: [string, string]) {
     let [start, end] = range;
-    this._start = moment(start).tz("Pacific/Honolulu");
-    this._end = moment(end).tz("Pacific/Honolulu");
+    this._start = moment(start).tz("Pacific/Pago_Pago");
+    this._end = moment(end).tz("Pacific/Pago_Pago");
     this._defaultValue = this._end.clone();
     this._coverageLabel = `${this._dateHandler.dateToString(this._start, this._period.unit, true)} - ${this._dateHandler.dateToString(this._end, this._period.unit, true)}`;
   }

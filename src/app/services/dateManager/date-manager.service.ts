@@ -34,7 +34,7 @@ export class DateManagerService {
 
   private periodPrecedent = ["second", "minute", "hour", "day", "month", "year"];
 
-  dataTimezone = "Pacific/Honolulu";
+  dataTimezone = "Pacific/Pago_Pago";
 
   getPeriodOffset(period: UnitOfTime, offset: number) {
     let offsetPeriod = null;
