@@ -70,8 +70,14 @@ export class DatasetFormManagerService {
     let mmUnits = new FormValue(new DisplayData("Values in millimeters", "mm", "mm"), {
       units: "mm"
     }, null);
+    let inUnits = new FormValue(new DisplayData("Values in millimeters", "in", "in"), {
+      units: "in"
+    }, null);
     let cUnits = new FormValue(new DisplayData("Values in degrees celcius", "°C", "c"), {
       units: "celcius"
+    }, null);
+    let fUnits = new FormValue(new DisplayData("Values in degrees celcius", "°F", "f"), {
+      units: "fahrenheit"
     }, null);
    
 
@@ -129,8 +135,8 @@ export class DatasetFormManagerService {
     let tempDSViewTypeNode = new FormNode(viewTypeDisplayData, [absoluteChangeView], absoluteChangeView);
 
 
-    let rfdsUnitsNode = new FormNode(unitsDisplayData, [mmUnits]);
-    let tempdsUnitsNode = new FormNode(unitsDisplayData, [cUnits]);
+    let rfdsUnitsNode = new FormNode(unitsDisplayData, [mmUnits, inUnits]);
+    let tempdsUnitsNode = new FormNode(unitsDisplayData, [cUnits, fUnits]);
 
 
     let rfUnitsNode = new FormNode(unitsDisplayData, [mmUnits]);
@@ -206,16 +212,16 @@ export class DatasetFormManagerService {
     let months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
     for(let month of months) {
       let capMonth = month.charAt(0).toUpperCase() + month.slice(1);
-      let prismRainfallClimatology = new VisDatasetItem(false, true, "Inches", "in", "Rainfall", `${capMonth} Mean Rainfall`, [0, 30], [true, false], null, [], false, {
+      let prismRainfallClimatology = new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `${capMonth} Mean Rainfall`, [0, 30], [true, false], null, [], false, {
         mean_type: "mean_monthly",
         cl_mean: month
       }, null, this.requestFactory);
       prismRainfallClimatologySets.push(prismRainfallClimatology);
-      let prismMaxTemperatureClimatology = new VisDatasetItem(false, true, "Fahrenheit", "°F", "Maximum Temperature", `${capMonth} Maximum Temperature`, [75, 90], [false, false], null, [], true, {
+      let prismMaxTemperatureClimatology = new VisDatasetItem(false, true, "Celcius", "°C", "Maximum Temperature", `${capMonth} Maximum Temperature`, [75, 90], [false, false], null, [], true, {
         mean_type: "mean_monthly",
         cl_mean: month
       }, null, this.requestFactory);
-      let prismMinTemperatureClimatology = new VisDatasetItem(false, true, "Fahrenheit", "°F", "Minimum Temperature", `${capMonth} Minimum Temperature`, [75, 90], [false, false], null, [], true, {
+      let prismMinTemperatureClimatology = new VisDatasetItem(false, true, "Celcius", "°C", "Minimum Temperature", `${capMonth} Minimum Temperature`, [75, 90], [false, false], null, [], true, {
         mean_type: "mean_monthly",
         cl_mean: month
       }, null, this.requestFactory);
@@ -223,16 +229,16 @@ export class DatasetFormManagerService {
       prismMinTemperatureClimatologySets.push(prismMinTemperatureClimatology);
     }
 
-    let prismRainfallClimatology = new VisDatasetItem(false, true, "Inches", "in", "Rainfall", `1971-2000 Mean Rainfall`, [0, 400], [true, false], null, [], false, {
+    let prismRainfallClimatology = new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `1971-2000 Mean Rainfall`, [0, 400], [true, false], null, [], false, {
       mean_type: "mean_30yr_annual",
       cl_mean: "1971-2000"
     }, null, this.requestFactory);
     prismRainfallClimatologySets.push(prismRainfallClimatology);
-    let prismMaxTemperatureClimatology = new VisDatasetItem(false, true, "Fahrenheit", "°F", "Maximum Temperature", `1971-2000 Maximum Temperature`, [75, 90], [false, false], null, [], true, {
+    let prismMaxTemperatureClimatology = new VisDatasetItem(false, true, "Celcius", "°C", "Maximum Temperature", `1971-2000 Maximum Temperature`, [75, 90], [false, false], null, [], true, {
       mean_type: "mean_30yr_annual",
       cl_mean: "1971-2000"
     }, null, this.requestFactory);
-    let prismMinTemperatureClimatology = new VisDatasetItem(false, true, "Fahrenheit", "°F", "Minimum Temperature", `1971-2000 Minimum Temperature`, [75, 90], [false, false], null, [], true, {
+    let prismMinTemperatureClimatology = new VisDatasetItem(false, true, "Celcius", "°C", "Minimum Temperature", `1971-2000 Minimum Temperature`, [75, 90], [false, false], null, [], true, {
       mean_type: "mean_30yr_annual",
       cl_mean: "1971-2000"
     }, null, this.requestFactory);
@@ -257,28 +263,71 @@ export class DatasetFormManagerService {
           mm: {
             unit: "Millimeters",
             short: "mm",
-            range: [-1000, 1000]
+            range: [-100, 100]
+          },
+          in: {
+            unit: "Inches",
+            short: "in",
+            range: [-4, 4]
           }
         }
       }
     }
     let rfChelsaDSItems = [
-      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP126) — 2071-2100}`, [0, 10000], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP126) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp126",
         season: "annual",
         ds_period: "2071-2100"
       }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
-      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP370) — 2071-2100}`, [0, 10000], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP370) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp370",
         season: "annual",
         ds_period: "2071-2100"
       }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
-      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP585) — 2071-2100}`, [0, 10000], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Annual Rainfall (SSP585) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp585",
         season: "annual",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
+
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Wet Season Rainfall (SSP126) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp126",
+        season: "wet",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Wet Season Rainfall (SSP370) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp370",
+        season: "wet",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Wet Season Rainfall (SSP585) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp585",
+        season: "wet",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
+
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Dry Season Rainfall (SSP126) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp126",
+        season: "dry",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Dry Season Rainfall (SSP370) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp370",
+        season: "dry",
+        ds_period: "2071-2100"
+      }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory),
+      new VisDatasetItem(false, true, "Millimeters", "mm", "Rainfall", `CHELSA Downscaled Dry Season Rainfall (SSP585) — 2071-2100`, [0, 10000], [true, false], null, null, false, {
+        dsm: "chelsa",
+        model: "ssp585",
+        season: "dry",
         ds_period: "2071-2100"
       }, new OptionData(rfDSViewTypeNode, {percent: null, absolute: rfdsUnitsNode}, rfUnitRepMap, "absolute", "mm"), this.requestFactory)
     ]
@@ -290,45 +339,50 @@ export class DatasetFormManagerService {
           c: {
             unit: "Celcius",
             short: "°C",
+            range: [2.4, 2.9]
+          },
+          f: {
+            unit: "Fahrenheit",
+            short: "°F",
             range: [4.4, 5.25]
           }
         }
       }
     }
     let tempChelsaDSItems = [
-      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Annual Temperature (SSP370) — 2071-2100`, [75, 90], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Celcius", "°C", "Temperature", `CHELSA Downscaled Annual Temperature (SSP370) — 2071-2100`, [75, 90], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp370",
         season: "annual",
         ds_period: "2071-2100"
       }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
-      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Annual Temperature (SSP585) — 2071-2100`, [75, 90], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Celcius", "°C", "Temperature", `CHELSA Downscaled Annual Temperature (SSP585) — 2071-2100`, [75, 90], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp585",
         season: "annual",
         ds_period: "2071-2100"
       }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
 
-      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Wet Season Temperature (SSP370) — 2071-2100`, [75, 90], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Celcius", "°C", "Temperature", `CHELSA Downscaled Wet Season Temperature (SSP370) — 2071-2100`, [75, 90], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp370",
         season: "wet",
         ds_period: "2071-2100"
       }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
-      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Wet Season Temperature (SSP585) — 2071-2100`, [75, 90], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Celcius", "°C", "Temperature", `CHELSA Downscaled Wet Season Temperature (SSP585) — 2071-2100`, [75, 90], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp585",
         season: "wet",
         ds_period: "2071-2100"
       }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
 
-      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Dry Season Temperature (SSP370) — 2071-2100`, [75, 90], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Celcius", "°C", "Temperature", `CHELSA Downscaled Dry Season Temperature (SSP370) — 2071-2100`, [75, 90], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp370",
         season: "dry",
         ds_period: "2071-2100"
       }, new OptionData(tempDSViewTypeNode, {absolute: tempdsUnitsNode}, tempUnitRepMap, "absolute", "c"), this.requestFactory),
-      new VisDatasetItem(false, true, "Celcius", "°C", "Rainfall", `CHELSA Downscaled Dry Season Temperature (SSP585) — 2071-2100`, [75, 90], [true, false], null, null, false, {
+      new VisDatasetItem(false, true, "Celcius", "°C", "Temperature", `CHELSA Downscaled Dry Season Temperature (SSP585) — 2071-2100`, [75, 90], [true, false], null, null, false, {
         dsm: "chelsa",
         model: "ssp585",
         season: "dry",
@@ -410,32 +464,34 @@ export class DatasetFormManagerService {
 
     //fileProperties
     let rfMmUnitsProperty = new FileProperty(rfUnitsNode.filter(["mm"]), ["mm"]);
+    let rfdsUnitsProperty = new FileProperty(rfdsUnitsNode, ["mm"]);
     let fillProperty = new FileProperty(fillNode, ["partial"]);
     let monthPrismClimatologyProperty = new FileProperty(prismClimatologyPeriodNode.filter(["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]), ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]);
     let yr30PrismClimatologyProperty = new FileProperty(prismClimatologyPeriodNode.filter(["1971-2000"]), ["1971-2000"]);
     let tempCUnitsProperty = new FileProperty(tempdsUnitsNode, ["c"]);
+    let tempdsUnitsProperty = new FileProperty(tempdsUnitsNode, ["c"]);
     let dsPeriodProperty = new FileProperty(dsPeriodNode, ["2071-2100"])
 
 
     //package files
     let rainfallMapFile = new FileData(rainfallMapDisplayData, geotiffFtype, ["metadata"]);
     let stationFile = new FileData(stationPartialDisplayData, csvFtype, []);
-    let prismClimatologyRainfallMapFile = new FileData(climatologyRainfallMapDisplayData, geotiffFtype, []);
-    let prismClimatologyTemperatureMapFile = new FileData(climatologyTemperatureMapDisplayData, geotiffFtype, []);
+    let prismClimatologyRainfallMapFile = new FileData(climatologyRainfallMapDisplayData, geotiffFtype, ["metadata"]);
+    let prismClimatologyTemperatureMapFile = new FileData(climatologyTemperatureMapDisplayData, geotiffFtype, ["metadata"]);
     let metadataFile = new FileData(metadataDisplayData, txtFtype, []);
-    let dsRainfallMapChangeFile = new FileData(dsRainfallMapChangeDisplayData, geotiffFtype, []);
-    let dsTemperatureMapChangeFile = new FileData(dsTemperatureMapChangeDisplayData, geotiffFtype, []);
+    let dsRainfallMapChangeFile = new FileData(dsRainfallMapChangeDisplayData, geotiffFtype, ["metadata"]);
+    let dsTemperatureMapChangeFile = new FileData(dsTemperatureMapChangeDisplayData, geotiffFtype, ["metadata"]);
 
 
     let rainfallDayMapFileGroup = new FileGroup(new DisplayData("", "", "a"), [rainfallMapFile, metadataFile], [rfMmUnitsProperty]);
     let rainfallDayStationFileGroup = new FileGroup(new DisplayData("", "", "aa"), [stationFile], [rfMmUnitsProperty, fillProperty]);
-    let prismClimatologyRainfallMonthFileGroup = new FileGroup(new DisplayData("", "", "b"), [prismClimatologyRainfallMapFile], [monthPrismClimatologyProperty]);
-    let prismClimatologyRainfall30yrFileGroup = new FileGroup(new DisplayData("", "", "c"), [prismClimatologyRainfallMapFile], [yr30PrismClimatologyProperty]);
-    let prismClimatologyTemperatureMonthFileGroup = new FileGroup(new DisplayData("", "", "d"), [prismClimatologyTemperatureMapFile], [monthPrismClimatologyProperty]);
-    let prismClimatologyTemperature30yrFileGroup = new FileGroup(new DisplayData("", "", "e"), [prismClimatologyTemperatureMapFile], [yr30PrismClimatologyProperty]);
+    let prismClimatologyRainfallMonthFileGroup = new FileGroup(new DisplayData("", "", "b"), [prismClimatologyRainfallMapFile, metadataFile], [rfdsUnitsProperty, monthPrismClimatologyProperty]);
+    let prismClimatologyRainfall30yrFileGroup = new FileGroup(new DisplayData("", "", "c"), [prismClimatologyRainfallMapFile, metadataFile], [rfdsUnitsProperty, yr30PrismClimatologyProperty]);
+    let prismClimatologyTemperatureMonthFileGroup = new FileGroup(new DisplayData("", "", "d"), [prismClimatologyTemperatureMapFile, metadataFile], [tempdsUnitsProperty, monthPrismClimatologyProperty]);
+    let prismClimatologyTemperature30yrFileGroup = new FileGroup(new DisplayData("", "", "e"), [prismClimatologyTemperatureMapFile, metadataFile], [tempdsUnitsProperty, yr30PrismClimatologyProperty]);
 
-    let chelsaDsRainfallChangeFileGroup = new FileGroup(new DisplayData("", "", "k"), [dsRainfallMapChangeFile], [rfMmUnitsProperty, dsPeriodProperty]);
-    let chelsaDsTemperatureChangeFileGroup = new FileGroup(new DisplayData("", "", "q"), [dsTemperatureMapChangeFile], [tempCUnitsProperty, dsPeriodProperty]);
+    let chelsaDsRainfallChangeFileGroup = new FileGroup(new DisplayData("", "", "k"), [dsRainfallMapChangeFile, metadataFile], [rfdsUnitsProperty, dsPeriodProperty]);
+    let chelsaDsTemperatureChangeFileGroup = new FileGroup(new DisplayData("", "", "q"), [dsTemperatureMapChangeFile, metadataFile], [tempdsUnitsProperty, dsPeriodProperty]);
 
     //export items
     ////rainfall
@@ -480,8 +536,40 @@ export class DatasetFormManagerService {
         dsm: "chelsa",
         model: "ssp585",
         season: "annual"
-      }, "CHELSA Downscaled Annual Rainfall (SSP585)", null, this.requestFactory)
-    ]
+      }, "CHELSA Downscaled Annual Rainfall (SSP585)", null, this.requestFactory),
+
+      new ExportDatasetItem([chelsaDsRainfallChangeFileGroup], {
+        dsm: "chelsa",
+        model: "ssp126",
+        season: "wet"
+      }, "CHELSA Downscaled Wet Season Rainfall (SSP126)", null, this.requestFactory),
+      new ExportDatasetItem([chelsaDsRainfallChangeFileGroup], {
+        dsm: "chelsa",
+        model: "ssp370",
+        season: "wet"
+      }, "CHELSA Downscaled Wet Season Rainfall (SSP370)", null, this.requestFactory),
+      new ExportDatasetItem([chelsaDsRainfallChangeFileGroup], {
+        dsm: "chelsa",
+        model: "ssp585",
+        season: "wet"
+      }, "CHELSA Downscaled Wet Season Rainfall (SSP585)", null, this.requestFactory),
+
+      new ExportDatasetItem([chelsaDsRainfallChangeFileGroup], {
+        dsm: "chelsa",
+        model: "ssp126",
+        season: "dry"
+      }, "CHELSA Downscaled Dry Season Rainfall (SSP126)", null, this.requestFactory),
+      new ExportDatasetItem([chelsaDsRainfallChangeFileGroup], {
+        dsm: "chelsa",
+        model: "ssp370",
+        season: "dry"
+      }, "CHELSA Downscaled Dry Season Rainfall (SSP370)", null, this.requestFactory),
+      new ExportDatasetItem([chelsaDsRainfallChangeFileGroup], {
+        dsm: "chelsa",
+        model: "ssp585",
+        season: "dry"
+      }, "CHELSA Downscaled Dry Season Rainfall (SSP585)", null, this.requestFactory)
+    ];
 
     let tempChelsaDSExportItems = [
       new ExportDatasetItem([chelsaDsTemperatureChangeFileGroup], {
