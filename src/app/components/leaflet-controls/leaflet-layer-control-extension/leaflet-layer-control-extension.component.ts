@@ -32,7 +32,7 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
     tacc3: "TACC 3-wave",
     tacc4: "TACC 4-wave",
     tacc5: "TACC 5-wave",
-    fema: "FEMA"
+    fema: "NWS"
   }
 
   private lastDiverging = "diverging";
