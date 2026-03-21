@@ -8,7 +8,7 @@ import { ColorGeneratorService, XMLColorSchemeData } from 'src/app/services/rast
 import { ColorScale } from 'src/app/models/colorScale';
 import { CustomColorSchemeService } from 'src/app/services/helpers/custom-color-scheme.service';
 import { AssetManagerService } from 'src/app/services/util/asset-manager.service';
-import { DisplayStyle } from 'src/app/services/dataset-form-manager.service';
+import { VisDatasetItem } from 'src/app/services/dataset-form-manager.service';
 import { StringMap } from 'src/app/models/types';
 
 @Component({
@@ -23,6 +23,9 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
   private layers: Layer;
   public schemeControl: FormControl;
 
+  public useExtremeControl: FormControl;
+  public usePseudoLogControl: FormControl;
+
   private lastDirect = "viridis";
   private directColorSchemes = {
     mono: "Monochromatic",
@@ -35,6 +38,8 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
     nwsRadar: "NWS Radar"
   }
 
+  logScaleValidSchemes = ["mono", "viridis", "turbo", "diverging", "nwsRadar"];
+
   private lastDiverging = "diverging";
   private divergingColorSchemes = {
     diverging: "Diverging"
@@ -46,13 +51,15 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
   private forbiddenNames: Set<string>;
   private debounce: boolean;
 
+// [reverseColors]="dataset.reverseColors"
+      // [dataRange]="dataset.dataRange"
+      // [displayStyle]="dataset.displayStyle"
+
   @Input() opacity: number;
   @Output() opacityChange: EventEmitter<number>;
   @Output() colorScheme: EventEmitter<ColorScale>;
   @Input() defaultScheme: string;
-  @Input() reverseColors: boolean;
-  @Input() dataRange: [number, number];
-  @Input() displayStyle: DisplayStyle;
+  @Input() dataset: VisDatasetItem;
 
   @Input() set map(map: Map) {
     if(map) {
@@ -99,7 +106,7 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(this.displayStyle == "standard") {
+    if(this.dataset.displayStyle == "standard") {
       this.baseColorSchemes = this.directColorSchemes;
       this.schemeControl.setValue(this.lastDirect);
     }
@@ -113,6 +120,8 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
     this.opacityChange = new EventEmitter<number>();
     this.colorScheme = new EventEmitter<ColorScale>();
     this.schemeControl = new FormControl();
+    this.useExtremeControl = new FormControl(false);
+    this.usePseudoLogControl = new FormControl(false);
     this.customColorSchemes = {};
     let forbiddenNames = Object.values(this.directColorSchemes).concat(Object.values(this.divergingColorSchemes))
     this.forbiddenNames = new Set<string>(forbiddenNames);
@@ -130,8 +139,15 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
   }
 
   ngOnInit() {
+    this.useExtremeControl.valueChanges.subscribe(() => {
+      this.schemeControl.setValue(this.schemeControl.value);
+    });
+    this.usePseudoLogControl.valueChanges.subscribe(() => {
+      this.schemeControl.setValue(this.schemeControl.value);
+    });
+
     this.schemeControl.valueChanges.subscribe((scheme: string) => {
-      if(this.displayStyle == "standard") {
+      if(this.dataset.displayStyle == "standard") {
         this.lastDirect = scheme;
       }
       else {
@@ -234,8 +250,11 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
   //note you are recomputing the color scheme every time one is selected, only really need to compute first times selected with current params/precompute all, maybe should change this
   //also wouldn't need promise chaining and all that if precomputed
   getColorScheme(scheme: string): Promise<[string, ColorScale]> {
-    let range: [number, number] = this.dataRange;
-    let reverseColors: boolean = this.reverseColors;
+    // sketchy but works
+    let range: [number, number] = this.dataset.label == "Daily Rainfall" && this.useExtremeControl.value ? [0, 250] : this.dataset.dataRange;
+    let reverseColors: boolean = this.dataset.reverseColors;
+
+    console.log(this.dataset);
 
     let getColorSchemeFromAssetFile = (fname: string, reverse?: boolean): Promise<ColorScale> => {
       return this.colors.getColorSchemeFromAssetFile(fname, range, reverse).then((data: XMLColorSchemeData) => {
@@ -246,31 +265,31 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
     let p: Promise<[string, ColorScale]>;
     switch(scheme) {
       case "mono": {
-        let colorScheme = this.colors.getDefaultMonochromaticRainfallColorScale(range, reverseColors);
+        let colorScheme = this.colors.getDefaultMonochromaticRainfallColorScale(range, reverseColors, this.usePseudoLogControl.value);
         let data: [string, ColorScale] = [scheme, colorScheme]
         p = Promise.resolve(data);
         break;
       }
       case "rainbow": {
-        let colorScheme = this.colors.getDefaultRainbowRainfallColorScale(range, reverseColors);
+        let colorScheme = this.colors.getDefaultRainbowRainfallColorScale(range, reverseColors, this.usePseudoLogControl.value);
         let data: [string, ColorScale] = [scheme, colorScheme]
         p = Promise.resolve(data);
         break;
       }
       case "reverseRainbow": {
-        let colorScheme = this.colors.getReverseRainbowColorScale(range, !reverseColors);
+        let colorScheme = this.colors.getReverseRainbowColorScale(range, !reverseColors, this.usePseudoLogControl.value);
         let data: [string, ColorScale] = [scheme, colorScheme]
         p = Promise.resolve(data);
         break;
       }
       case "nwsRadar": {
-        let colorScheme = this.colors.getNWSRadarColorScale(range, reverseColors);
+        let colorScheme = this.colors.getNWSRadarColorScale(range, reverseColors, this.usePseudoLogControl.value);
         let data: [string, ColorScale] = [scheme, colorScheme]
         p = Promise.resolve(data);
         break;
       }
       case "turbo": {
-        let colorScheme = this.colors.getTurboColorScale(range, reverseColors);
+        let colorScheme = this.colors.getTurboColorScale(range, reverseColors, this.usePseudoLogControl.value);
         let data: [string, ColorScale] = [scheme, colorScheme]
         p = Promise.resolve(data);
         break;
@@ -282,18 +301,18 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
         break;
       }
       case "viridis": {
-        let colorScheme = this.colors.getViridisColorScale(range, reverseColors);
+        let colorScheme = this.colors.getViridisColorScale(range, reverseColors, this.usePseudoLogControl.value);
         let data: [string, ColorScale] = [scheme, colorScheme]
         p = Promise.resolve(data);
         break;
       }
       case "diverging": {
         let colorScheme: ColorScale;
-        if(this.displayStyle == "increasing") {
-          colorScheme = this.colors.getIncreasingColorScale(range, true);
+        if(this.dataset.displayStyle == "increasing") {
+          colorScheme = this.colors.getIncreasingColorScale(range, true, this.usePseudoLogControl.value);
         }
         else {
-          colorScheme = this.colors.getDivergentColorScale(range, reverseColors);
+          colorScheme = this.colors.getDivergentColorScale(range, reverseColors, this.usePseudoLogControl.value);
         }
         let data: [string, ColorScale] = [scheme, colorScheme]
         p = Promise.resolve(data);
