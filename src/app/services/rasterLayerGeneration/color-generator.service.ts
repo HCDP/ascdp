@@ -13,8 +13,44 @@ export class ColorGeneratorService {
   constructor(private http: HttpClient) {
   }
 
+  getNWSRadarColorScale(dataRange: [number, number], reverse: boolean): ColorScale {
+    let parts = ColorGeneratorService.COLOR_PARTS;
+    let range: [number, number] = dataRange;
 
-  getDefaultFemaColorScale(dataRange: [number, number], reverse: boolean): ColorScale {
+    let colors = [
+      "#25A1DD",
+      "#002EF4",
+      "#02FA00", 
+      "#309D00",
+      "#FDFB00", 
+      "#C89B2C", 
+      "#FF9A00",
+      "#FE3200", 
+      "#CE3101",
+      "#9A3300",
+      "#FF3AFF"
+    ];
+    //temp? should this be handled differently?
+    if(reverse) {
+      colors = colors.reverse();
+    }
+    let colorScale = chroma.scale(colors).domain(range);
+
+    let getColor = (value: number) => {
+      let color = colorScale(value);
+      return {
+        r: color._rgb[0],
+        g: color._rgb[1],
+        b: color._rgb[2],
+        a: color._rgb[3] * 255
+      };
+    }
+
+    return new ColorScale(getColor, range, parts);
+  }
+
+
+  getReverseRainbowColorScale(dataRange: [number, number], reverse: boolean): ColorScale {
     let parts = ColorGeneratorService.COLOR_PARTS;
     let range: [number, number] = dataRange;
 

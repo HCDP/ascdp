@@ -32,7 +32,7 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
     tacc3: "TACC 3-wave",
     tacc4: "TACC 4-wave",
     tacc5: "TACC 5-wave",
-    fema: "NWS"
+    nwsRadar: "NWS Radar"
   }
 
   private lastDiverging = "diverging";
@@ -257,8 +257,14 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
         p = Promise.resolve(data);
         break;
       }
-      case "fema": {
-        let colorScheme = this.colors.getDefaultFemaColorScale(range, reverseColors);
+      case "reverseRainbow": {
+        let colorScheme = this.colors.getReverseRainbowColorScale(range, !reverseColors);
+        let data: [string, ColorScale] = [scheme, colorScheme]
+        p = Promise.resolve(data);
+        break;
+      }
+      case "nwsRadar": {
+        let colorScheme = this.colors.getNWSRadarColorScale(range, reverseColors);
         let data: [string, ColorScale] = [scheme, colorScheme]
         p = Promise.resolve(data);
         break;
