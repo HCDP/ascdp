@@ -9,12 +9,14 @@ export class ColorScale {
   private colors: Color[];
   private hexColors: string[];
   private range: [number, number];
+  private scaledRange: [number, number];
 
   //scale allows for different scalings to be introduced, e.g. for an exponential scaling, should return value squared
-  constructor(colorFunct: (value: number) => Color, range: [number, number], numColors: number) {
+  constructor(colorFunct: (value: number) => Color, range: [number, number], scaledRange: [number, number], numColors: number) {
     this.colors = [];
     this.hexColors = [];
     this.range = range;
+    this.scaledRange = scaledRange;
 
     let span = range[1] - range[0];
     let interval = span / numColors;
@@ -75,6 +77,10 @@ export class ColorScale {
 
   getRange(): [number, number] {
     return this.range;
+  }
+
+  getScaledRange(): [number, number] {
+    return this.scaledRange;
   }
 
   getColors(): Color[] {

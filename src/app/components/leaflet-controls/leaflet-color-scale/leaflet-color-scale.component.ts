@@ -31,7 +31,7 @@ export class LeafletColorScaleComponent implements OnInit {
   @Input() set colorScale(colorScale: ColorScale) {
     this.__colorScale = colorScale
     if(colorScale) {
-      let range = colorScale.getRange();
+      let range = colorScale.getScaledRange();
       let parts = this.intervals - 1;
       let span = range[1] - range[0];
       let intervalSize = span / parts;
@@ -71,7 +71,10 @@ export class LeafletColorScaleComponent implements OnInit {
     this.intervalLabelsRaw = [];
   }
 
+
   ngOnInit() {
+    // Extremely hacky unit injection fix
+    (window as any).leafletScale = this; 
   }
 
   updateLabels() {

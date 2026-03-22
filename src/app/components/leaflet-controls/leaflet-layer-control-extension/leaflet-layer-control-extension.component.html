@@ -38,11 +38,15 @@
     </mat-form-field>
   </div>
 
-  <mat-checkbox *ngIf="dataset.label == 'Daily Rainfall'" [formControl]="useExtremeControl" color="primary">
-    Use extreme value scale
-  </mat-checkbox>
-  <mat-checkbox  *ngIf="logScaleValidSchemes.includes(schemeControl.value)" [formControl]="usePseudoLogControl" color="primary">
-    Use pseudo-log scale
-  </mat-checkbox>
-
+  <div class="options-container">
+    <mat-checkbox  *ngIf="getSITranslation() !== null" [formControl]="convertSI" color="primary">
+      Convert to SI units
+    </mat-checkbox>
+    <mat-checkbox *ngIf="isDailyRainfall()" [formControl]="useExtremeControl" color="primary">
+      Use extreme value scale
+    </mat-checkbox>
+    <mat-checkbox  *ngIf="logScaleValidSchemes.includes(schemeControl.value)" [formControl]="usePseudoLogControl" color="primary">
+      Use pseudo-log scale
+    </mat-checkbox>
+  </div>
 </div>
