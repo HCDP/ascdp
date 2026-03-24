@@ -104,7 +104,6 @@ export class LeafletLayerControlExtensionComponent implements OnInit, OnChanges 
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("change");
     if(this.dataset.displayStyle == "standard") {
       this.baseColorSchemes = this.directColorSchemes;
       this.schemeControl.setValue(this.lastDirect);
