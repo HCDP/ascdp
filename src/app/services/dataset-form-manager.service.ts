@@ -23,6 +23,7 @@ export class DatasetFormManagerService {
     ////values
     //////period
     let periodDay = new FormValue(new DisplayData("Data measured at a daily time scale.", "Daily", "day"), {period: "day"}, [true, true]);
+    let periodMonth = new FormValue(new DisplayData("Data measured at a monthly time scale.", "Monthly", "month"), {period: "month"}, [true, true]);
     //fill
     let fillPartialFilled = new FormValue(new DisplayData("This data has undergone QA/QC and is partially filled using statistical techniques to estimate some missing station values.", "Partial Filled", "partial"), {fill: "partial"}, [false, true]);
     //Climatology mean type
@@ -55,6 +56,36 @@ export class DatasetFormManagerService {
     let seasonWet = new FormValue(new DisplayData("Only includes data from the dry season.", "Dry", "dry"), {season: "dry"}, [true, true]);
     //ds period
     let periodChelsaLate = new FormValue(new DisplayData("Late-century (2071-2100) projections.", "Late-Century (2071-2100)", "2071-2100"), {period: "2071-2100"}, [true, true]);
+    
+    //timescales
+    let timescale001 = new FormValue(new DisplayData("1-month SPI timescale (SPI-1)", "1 Month", "timescale001"), {
+      timescale: "timescale001"
+    }, [true, true]);
+    let timescale003 = new FormValue(new DisplayData("3-month SPI timescale (SPI-3)", "3 Month", "timescale003"), {
+      timescale: "timescale003"
+    }, [true, true]);
+    let timescale006 = new FormValue(new DisplayData("6-month SPI timescale (SPI-6)", "6 Month", "timescale006"), {
+      timescale: "timescale006"
+    }, [true, true]);
+    let timescale009 = new FormValue(new DisplayData("9-month SPI timescale (SPI-9)", "9 Month", "timescale009"), {
+      timescale: "timescale009"
+    }, [true, true]);
+    let timescale012 = new FormValue(new DisplayData("12-month SPI timescale (SPI-12)", "12 Month", "timescale012"), {
+      timescale: "timescale012"
+    }, [true, true]);
+    let timescale024 = new FormValue(new DisplayData("24-month SPI timescale (SPI-24)", "24 Month", "timescale024"), {
+      timescale: "timescale024"
+    }, [true, true]);
+    let timescale036 = new FormValue(new DisplayData("36-month SPI timescale (SPI-36)", "36 Month", "timescale036"), {
+      timescale: "timescale036"
+    }, [true, true]);
+    let timescale048 = new FormValue(new DisplayData("48-month SPI timescale (SPI-48)", "48 Month", "timescale048"), {
+      timescale: "timescale048"
+    }, [true, true]);
+    let timescale060 = new FormValue(new DisplayData("60-month SPI timescale (SPI-60)", "60 Month", "timescale060"), {
+      timescale: "timescale060"
+    }, [true, true]);
+
     //view types
     let percentChangeView = new FormValue(new DisplayData("Percent change in value relative to present day conditions.", "Percent change", "percent"), {
       type: "percent"
@@ -88,6 +119,11 @@ export class DatasetFormManagerService {
     let periodNode = new FormNode(new DisplayData("The time period over which the data is measured.", "Time Period", "period"), [
       periodDay
     ]);
+    
+    let spiPeriodNode = new FormNode(new DisplayData("The time period over which the data is measured.", "Time Period", "period"), [
+      periodMonth
+    ]);
+
     let prismClimatologyMeanTypeNode = new FormNode(new DisplayData("The type of data aggregation", "Mean Type", "mean_type"), [
       meanMonthly,
       meanAnnual30
@@ -128,6 +164,9 @@ export class DatasetFormManagerService {
       periodChelsaLate
     ]);
 
+    let timescaleDisplayData = new DisplayData("SPI can be computed over different time scales, reflecting various types of drought. For example, a 1-month timescale and is useful for assessing short-term conditions such as soil moisture. In contrast, a 12-month period and is better suited for detecting long-term droughts.", "Timescale", "timescale");
+    let timescaleNode = new FormNode(timescaleDisplayData, [timescale001, timescale003, timescale006, timescale009, timescale012, timescale024, timescale036, timescale048, timescale060], timescale001);
+
     let viewTypeDisplayData = new DisplayData("How should the data be viewed? Either view the data directly or relative to present conditions.", "View Type", "view");
     let unitsDisplayData = new DisplayData("The units the data are represented in.", "Units", "units");
 
@@ -156,6 +195,11 @@ export class DatasetFormManagerService {
     ]);
     let periodOnlyFormData = new FormData([
       periodNode
+    ], []);
+    //spi
+    let spiFormData = new FormData([
+      spiPeriodNode,
+      timescaleNode
     ], []);
     //climatologies
     let prismClimatologyFormData = new FormData([
@@ -195,16 +239,66 @@ export class DatasetFormManagerService {
     ////dates
 
     ////periods
+    let yearPeriod = new PeriodData("year", 1, "year");
     let monthPeriod = new PeriodData("month", 1, "month");
     let dayPeriod = new PeriodData("day", 1, "day");
     ////focus managers
     let rainfallDayTimeseriesData = new TimeseriesData(dayPeriod, monthPeriod, this.dateHandler);
+
+    let spiTimescale001TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
+    let spiTimescale003TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
+    let spiTimescale006TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
+    let spiTimescale009TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
+    let spiTimescale012TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
+    let spiTimescale024TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
+    let spiTimescale036TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
+    let spiTimescale048TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
+    let spiTimescale060TimeseriesData = new TimeseriesData(monthPeriod, yearPeriod, this.dateHandler);
 
 
     let rainfallDayPartial = new VisDatasetItem(true, true, "Millimeters", "mm", "Rainfall", "Daily Rainfall", [0, 20], [true, false], rainfallDayTimeseriesData, [rainfallDayTimeseriesData], false, {
       period: "day",
       fill: "partial"
     }, null, this.requestFactory);
+    
+    //spi
+    let spiMonthTimescale001 = new VisDatasetItem(false, true, "", "", "1-Month Standardized Precipitation Index (SPI-1)", "1-Month Standardized Precipitation Index (SPI-1)", [-3, 3], [false, false], spiTimescale001TimeseriesData, [spiTimescale001TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale001"
+    }, null, this.requestFactory);
+    let spiMonthTimescale003 = new VisDatasetItem(false, true, "", "", "3-Month Standardized Precipitation Index (SPI-3)", "3-Month Standardized Precipitation Index (SPI-3)", [-3, 3], [false, false], spiTimescale003TimeseriesData, [spiTimescale003TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale003"
+    }, null, this.requestFactory);
+    let spiMonthTimescale006 = new VisDatasetItem(false, true, "", "", "6-Month Standardized Precipitation Index (SPI-6)", "6-Month Standardized Precipitation Index (SPI-6)", [-3, 3], [false, false], spiTimescale006TimeseriesData, [spiTimescale006TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale006"
+    }, null, this.requestFactory);
+    let spiMonthTimescale009 = new VisDatasetItem(false, true, "", "", "9-Month Standardized Precipitation Index (SPI-9)", "9-Month Standardized Precipitation Index (SPI-9)", [-3, 3], [false, false], spiTimescale009TimeseriesData, [spiTimescale009TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale009"
+    }, null, this.requestFactory);
+    let spiMonthTimescale012 = new VisDatasetItem(false, true, "", "", "12-Month Standardized Precipitation Index (SPI-12)", "12-Month Standardized Precipitation Index (SPI-12)", [-3, 3], [false, false], spiTimescale012TimeseriesData, [spiTimescale012TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale012"
+    }, null, this.requestFactory);
+    let spiMonthTimescale024 = new VisDatasetItem(false, true, "", "", "24-Month Standardized Precipitation Index (SPI-24)", "24-Month Standardized Precipitation Index (SPI-24)", [-3, 3], [false, false], spiTimescale024TimeseriesData, [spiTimescale024TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale024"
+    }, null, this.requestFactory);
+    let spiMonthTimescale036 = new VisDatasetItem(false, true, "", "", "36-Month Standardized Precipitation Index (SPI-36)", "36-Month Standardized Precipitation Index (SPI-36)", [-3, 3], [false, false], spiTimescale036TimeseriesData, [spiTimescale036TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale036"
+    }, null, this.requestFactory);
+    let spiMonthTimescale048 = new VisDatasetItem(false, true, "", "", "48-Month Standardized Precipitation Index (SPI-48)", "48-Month Standardized Precipitation Index (SPI-48)", [-3, 3], [false, false], spiTimescale048TimeseriesData, [spiTimescale048TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale048"
+    }, null, this.requestFactory);
+    let spiMonthTimescale060 = new VisDatasetItem(false, true, "", "", "60-Month Standardized Precipitation Index (SPI-60)", "60-Month Standardized Precipitation Index (SPI-60)", [-3, 3], [false, false], spiTimescale060TimeseriesData, [spiTimescale060TimeseriesData], false, {
+      period: "month",
+      timescale: "timescale060"
+    }, null, this.requestFactory);
+
     //climatologies
     let prismRainfallClimatologySets = [];
     let prismMaxTemperatureClimatologySets = [];
@@ -402,6 +496,24 @@ export class DatasetFormManagerService {
     }, rainfallFormData, [
       rainfallDayPartial,
     ]);
+    
+    //spi
+    let spiDatasetDisplayData = new DisplayData("The Standardized Precipitation Index (SPI) is a drought index based solely on rainfall data. It is calculated by fitting a gamma probability distribution to long-term precipitation records and standardizing the results. Values below -1 are typically classified as drought conditions. The more negative the SPI value, the more severe the drought.", "Standardized Precipitation Index (SPI)", "spi");
+
+    let spiVisDataset = new Dataset<VisDatasetItem>(spiDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "spi"
+    }, spiFormData, [
+      spiMonthTimescale001,
+      spiMonthTimescale003,
+      spiMonthTimescale006,
+      spiMonthTimescale009,
+      spiMonthTimescale012,
+      spiMonthTimescale024,
+      spiMonthTimescale036,
+      spiMonthTimescale048,
+      spiMonthTimescale060
+    ]);
 
     //climatologies
     let prismClimatologyRainfallDatasetDisplayData = new DisplayData("Mean rainfall climatologies", "Mean Rainfall", "prism_mean_rf_climatology");
@@ -459,6 +571,7 @@ export class DatasetFormManagerService {
     let stationPartialDisplayData = new DisplayData("Processed station data including each station's metadata and values over a period of time", "Station Data", "station_data");
     let dsRainfallMapChangeDisplayData = new DisplayData("A gridded map displaying the predicted change in rainfall from present day conditions.", "Rainfall Change Map", "data_map_change"); //includes percent
     let dsTemperatureMapChangeDisplayData = new DisplayData("A gridded map displaying the predicted change in temperature from present day conditions.", "Temperature Change Map", "data_map_change");
+    let spiMapDisplayData = new DisplayData("A gridded standardized precipitation index (SPI) map representing a drought index based solely on rainfall data. It is calculated by fitting a gamma probability distribution to long-term precipitation records and standardizing the results.", "SPI Map", "data_map");
 
     ////nodes
 
@@ -481,6 +594,7 @@ export class DatasetFormManagerService {
     let metadataFile = new FileData(metadataDisplayData, txtFtype, []);
     let dsRainfallMapChangeFile = new FileData(dsRainfallMapChangeDisplayData, geotiffFtype, ["metadata"]);
     let dsTemperatureMapChangeFile = new FileData(dsTemperatureMapChangeDisplayData, geotiffFtype, ["metadata"]);
+    let spiMapFile = new FileData(spiMapDisplayData, geotiffFtype, []);
 
 
     let rainfallDayMapFileGroup = new FileGroup(new DisplayData("", "", "a"), [rainfallMapFile, metadataFile], [rfMmUnitsProperty]);
@@ -492,6 +606,8 @@ export class DatasetFormManagerService {
 
     let chelsaDsRainfallChangeFileGroup = new FileGroup(new DisplayData("", "", "k"), [dsRainfallMapChangeFile, metadataFile], [rfdsUnitsProperty, dsPeriodProperty]);
     let chelsaDsTemperatureChangeFileGroup = new FileGroup(new DisplayData("", "", "q"), [dsTemperatureMapChangeFile, metadataFile], [tempdsUnitsProperty, dsPeriodProperty]);
+    
+    let spiMapGroup = new FileGroup(new DisplayData("", "", "ag"), [spiMapFile], []);
 
     //export items
     ////rainfall
@@ -519,6 +635,44 @@ export class DatasetFormManagerService {
     let prismClimatologyMinTemperature30yrExportItem = new ExportDatasetItem([prismClimatologyTemperature30yrFileGroup], {
       mean_type: "mean_30yr_annual"
     }, "PRISM Mean Annual 30 Year Minimum Temperature Climatologies", null, this.requestFactory);
+
+    //spi
+    let spiMonthTimescale001ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale001"
+    }, "Monthly SPI", spiTimescale001TimeseriesData, this.requestFactory);
+    let spiMonthTimescale003ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale003"
+    }, "Monthly SPI", spiTimescale003TimeseriesData, this.requestFactory);
+    let spiMonthTimescale006ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale006"
+    }, "Monthly SPI", spiTimescale006TimeseriesData, this.requestFactory);
+    let spiMonthTimescale009ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale009"
+    }, "Monthly SPI", spiTimescale009TimeseriesData, this.requestFactory);
+    let spiMonthTimescale012ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale012"
+    }, "Monthly SPI", spiTimescale012TimeseriesData, this.requestFactory);
+    let spiMonthTimescale024ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale024"
+    }, "Monthly SPI", spiTimescale024TimeseriesData, this.requestFactory);
+    let spiMonthTimescale036ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale036"
+    }, "Monthly SPI", spiTimescale036TimeseriesData, this.requestFactory);
+    let spiMonthTimescale048ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale048"
+    }, "Monthly SPI", spiTimescale048TimeseriesData, this.requestFactory);
+    let spiMonthTimescale060ExportItem = new ExportDatasetItem([spiMapGroup], {
+      period: "month",
+      timescale: "timescale060"
+    }, "Monthly SPI", spiTimescale060TimeseriesData, this.requestFactory);
 
     //DS
     let rfChelsaDSExportItems = [
@@ -617,6 +771,21 @@ export class DatasetFormManagerService {
       rainfallDayExportItem
     ]);
 
+    let spiExportDataset = new Dataset<ExportDatasetItem>(spiDatasetDisplayData, {
+      location: "american_samoa",
+      datatype: "spi"
+    }, spiFormData, [
+      spiMonthTimescale001ExportItem,
+      spiMonthTimescale003ExportItem,
+      spiMonthTimescale006ExportItem,
+      spiMonthTimescale009ExportItem,
+      spiMonthTimescale012ExportItem,
+      spiMonthTimescale024ExportItem,
+      spiMonthTimescale036ExportItem,
+      spiMonthTimescale048ExportItem,
+      spiMonthTimescale060ExportItem
+    ]);
+
     let prismClimatologyRainfallExportDataset = new Dataset<ExportDatasetItem>(prismClimatologyRainfallDatasetDisplayData, {
       location: "american_samoa",
       datatype: "prism_climatology",
@@ -663,8 +832,8 @@ export class DatasetFormManagerService {
 
     let datasetFormDisplayData = new DisplayData("Select the type of data you would like to view. Hover over an option for a description of the dataset.", "Dataset", "dataset");
     //vis dataset groups
-    let visDatasets = [rainfallVisDataset, prismRainfallClimatologyVisDataset, prismMaxTemperatureClimatologyVisDataset, prismMinTemperatureClimatologyVisDataset, dsRainfallVisDataset, dsTemperatureVisDataset];
-    let visDatasetSingles: Dataset<VisDatasetItem>[] = [rainfallVisDataset];
+    let visDatasets = [rainfallVisDataset, prismRainfallClimatologyVisDataset, prismMaxTemperatureClimatologyVisDataset, prismMinTemperatureClimatologyVisDataset, dsRainfallVisDataset, dsTemperatureVisDataset, spiVisDataset];
+    let visDatasetSingles: Dataset<VisDatasetItem>[] = [rainfallVisDataset, spiVisDataset];
     let visDatasetGroupers: DatasetSelectorGroup[] = [
       new DatasetSelectorGroup(prismClimatologyGrouperDisplayData, [prismRainfallClimatologyVisDataset, prismMaxTemperatureClimatologyVisDataset, prismMinTemperatureClimatologyVisDataset]),
       new DatasetSelectorGroup(dsGrouperDisplayData, [dsRainfallVisDataset, dsTemperatureVisDataset])
@@ -672,8 +841,8 @@ export class DatasetFormManagerService {
     let visDatasetFormData = new DatasetFormData(datasetFormDisplayData, visDatasetSingles, visDatasetGroupers);
 
     //export dataset groups
-    let exportDatasets = [rainfallExportDataset, prismClimatologyRainfallExportDataset, prismClimatologyMaxTemperatureExportDataset, prismClimatologyMinTemperatureExportDataset, dsRainfallExportDataset, dsTemperatureExportDataset];
-    let exportDatasetSingles: Dataset<ExportDatasetItem>[] = [rainfallExportDataset];
+    let exportDatasets = [rainfallExportDataset, prismClimatologyRainfallExportDataset, prismClimatologyMaxTemperatureExportDataset, prismClimatologyMinTemperatureExportDataset, dsRainfallExportDataset, dsTemperatureExportDataset, spiExportDataset];
+    let exportDatasetSingles: Dataset<ExportDatasetItem>[] = [rainfallExportDataset, spiExportDataset];
     let exportDatasetGroupers: DatasetSelectorGroup[] = [
       new DatasetSelectorGroup(prismClimatologyGrouperDisplayData, [prismClimatologyRainfallExportDataset, prismClimatologyMaxTemperatureExportDataset, prismClimatologyMinTemperatureExportDataset]),
       new DatasetSelectorGroup(dsGrouperDisplayData, [dsRainfallExportDataset, dsTemperatureExportDataset])
