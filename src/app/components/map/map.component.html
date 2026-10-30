@@ -10,7 +10,7 @@
       [opacity]="opacity"
       (opacityChange)="setOpacity($event)"
       (colorScheme)="setColorScheme($event)"
-      defaultScheme="viridis"
+      [defaultScheme]="defaultColorScheme"
       [dataset]="dataset"
       [options]="datasetOptions"
     ></app-leaflet-layer-control-extension>
